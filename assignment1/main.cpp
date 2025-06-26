@@ -25,9 +25,9 @@ const std::string COURSES_NOT_OFFERED_PATH = "student_output/courses_not_offered
  * Hint: Remember what types C++ streams work with?!
  */
 struct Course {
-  /* STUDENT TODO */ title;
-  /* STUDENT TODO */ number_of_units;
-  /* STUDENT TODO */ quarter;
+  std::string title;
+  std::string number_of_units;
+  std::string quarter;
 };
 
 /**
@@ -58,8 +58,25 @@ struct Course {
  * @param filename The name of the file to parse.
  * @param courses  A vector of courses to populate.
  */
-void parse_csv(std::string filename, std::vector<Course> courses) {
-  /* (STUDENT TODO) Your code goes here... */
+// You can change the return type(too much things to modify), or pass courses by reference, I chose the latter
+void parse_csv(std::string filename, std::vector<Course>& courses) {
+
+  std::ifstream file(filename);
+
+  std::string line;
+  // consumes the first line so it's ignored
+  std::getline(file, line);
+
+  while (std::getline(file, line)) {
+    auto record {split(line, ',')};
+    Course course;
+    course.title = record[0];
+    course.number_of_units = record[1];
+    course.quarter = record[2];
+
+    courses.push_back(course);
+  }
+
 }
 
 /**
@@ -80,8 +97,35 @@ void parse_csv(std::string filename, std::vector<Course> courses) {
  * @param all_courses A vector of all courses gotten by calling `parse_csv`.
  *                    This vector will be modified by removing all offered courses.
  */
-void write_courses_offered(std::vector<Course> all_courses) {
-  /* (STUDENT TODO) Your code goes here... */
+void write_courses_offered(std::vector<Course>& all_courses) {
+
+  std::ofstream file("student_output/courses_offered.csv");
+
+  // getting the new line from courses.csv
+  std::ifstream infile("courses.csv");
+  std::string first_line;
+  std::getline(infile, first_line);
+  file << first_line << "\n";
+
+  /* JUST SAW THIS, sorry
+  One way to do this is to keep track of the courses that are offered perhaps with another vector and delete them from all_courses. 
+  Just like in Python and many other languages, 
+  it is a bad idea to remove elements from a data structure while you are iterating over it,
+  so you'll probably want to do this after you have written all offered courses to file.
+  */
+  // iterator loop, better when deleting items, because when deleting, it returns next valid iterator
+  for (auto iter = all_courses.begin(); iter != all_courses.end();) {
+    Course course = *iter;
+    if (course.quarter == "null") {
+      iter++;
+      continue;
+    }
+    
+    file << course.title << "," << course.number_of_units << "," << course.quarter << "\n";
+    iter = all_courses.erase(iter);
+  }
+
+  file.close();
 }
 
 /**
@@ -98,7 +142,22 @@ void write_courses_offered(std::vector<Course> all_courses) {
  * @param unlisted_courses A vector of courses that are not offered.
  */
 void write_courses_not_offered(std::vector<Course> unlisted_courses) {
-  /* (STUDENT TODO) Your code goes here... */
+  
+
+  std::ofstream file("student_output/courses_not_offered.csv");
+  
+  // getting the new line from courses.csv
+  std::ifstream infile("courses.csv");
+  std::string first_line;
+  std::getline(infile, first_line);
+  file << first_line << "\n";
+
+
+  for (Course course: unlisted_courses) {
+    file << course.title << "," << course.number_of_units << "," << course.quarter << "\n";
+  }
+
+
 }
 
 int main() {
@@ -109,7 +168,7 @@ int main() {
   parse_csv("courses.csv", courses);
 
   /* Uncomment for debugging... */
-  // print_courses(courses);
+  print_courses(courses);
 
   write_courses_offered(courses);
   write_courses_not_offered(courses);
