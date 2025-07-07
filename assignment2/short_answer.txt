@@ -5,7 +5,11 @@ Marriage Pact
 -------------
 
 Q1. It is your choice to use either an ordered or unordered set. In a few sentences, what are some of the tradeoffs between the two? Additionally, please give an example (that has not been shown in lecture) of a valid hash function that could be used to hash student names for an unordered set.
-A1. TODO
+A1. some tradeoffs between a set and unordered_set is that set uses a red-black tree internally to store elements, while unordered_set uses a hashtable; so set can be faster. another hash function is the SHA-1 function.
+
+/*
+An std::set is an ordered container implemented as a balanced binary search tree (typically a red-black tree), which keeps elements in sorted order and supports logarithmic-time operations. In contrast, an std::unordered_set uses a hash table for storage, which allows for average-case constant-time insertions, deletions, and lookups, but does not maintain any order. The tradeoff is between ordering and performance: use set when order matters, and unordered_set when speed is more important and ordering is irrelevant.
+*/
 
 Q2. Note that we are saving pointers to names in the queue, not names themselves. Why might this be desired in this problem? What happens if the original set where the names are stored goes out of scope and the pointers are referenced?
 A2. TODO
